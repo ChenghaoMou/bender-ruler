@@ -3,3 +3,4 @@ grobid*
 papers/*pdf
 papers/*json
 .DS_Store
+.vscode
