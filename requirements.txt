@@ -1,6 +1,7 @@
+requests==2.26.0
 tqdm==4.62.0
-regex==2021.8.3
 spacy==3.1.1
 git+https://github.com/titipata/scipdf_parser
-arxiv==1.4.1
+beautifulsoup4==4.9.3
 rich==10.7.0
+typer==0.3.2
