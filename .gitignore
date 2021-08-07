@@ -1,0 +1,5 @@
+grobid*
+!.gitignore
+papers/*pdf
+papers/*json
+.DS_Store
