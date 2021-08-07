@@ -1,11 +1,25 @@
-import scipdf
-import os
 import json
-from tqdm import tqdm
+import os
 from typing import List
+from collections import defaultdict, Counter
 
+import scipdf
+import spacy
+from tqdm import tqdm
+from rich.console import Console
+from rich.progress import track
+
+console = Console()
 
 def extract_data(dir: str):
+    """Extract data from a directory of pdf files. Extracted data follows the GROBID data format.
+    See https://github.com/kermitt2/grobid and https://github.com/titipata/scipdf_parser.
+
+    Parameters
+    ----------
+    dir : str
+        The directory of pdf files
+    """
     for root, _, files in os.walk(dir):
         for file in tqdm(files):
             filename, _ = os.path.splitext(file)
@@ -16,33 +30,63 @@ def extract_data(dir: str):
             except Exception:
                 pass
 
-def load_data(dir: str):
+def load_data(dir: str) -> List[str]:
+    """Extract all text data from extracted GROBID data in the given directory.
 
+    Parameters
+    ----------
+    dir : str
+        Directory of extracted GROBID data
+
+    Returns
+    -------
+    List[str]
+        List of extracted documents
+    """
     documents: List[str] = []
 
     for root, _, files in os.walk(dir):
-        for file in tqdm(files):
-            filename, ext = os.path.splitext(file)
+        for file in track(files):
+            _, ext = os.path.splitext(file)
             if ext != ".json":
                 continue
             with open(os.path.join(root, file), 'r') as f:
                 d = json.loads(f.read())
                 documents.append(
-                    d["title"] + " " + d["abstract"] + " ".join([s["heading"] + " " + s["text"] for s in d["sections"]])
+                    (d["title"], d["title"] + " " + d["abstract"] + " ".join([s["heading"] + " " + s["text"] for s in d["sections"]]))
                 )
     
     return documents
 
 def analyze(documents: List[str]):
 
-    count = 0
-    for document in documents:
-        if "english" in document.lower():
-            count += 1
-    print(count, len(documents))
-    return count
+    mentions = []
+    nlp = spacy.load("en_core_web_sm")
+    titles, documents = zip(*documents)
+    counter = Counter()
+    non_empty: int = 0
+
+    for title, doc in track(zip(titles, documents), total=len(titles)):
+        curr = defaultdict(int)
+        doc = nlp(doc) # not using pipe because it is too slow
+        for ent in doc.ents:
+            if ent.label_ == "LANGUAGE":
+                curr[ent.text.title()] += 1
+                
+        if curr:
+            non_empty += 1
+            for lan in curr:
+                counter[lan.title()] += 1
+        
+        mentions.append((title, curr))
+    
+    console.print(f"{non_empty}/{len(titles)} paper(s) mention(s) at least one language.")
+    console.print(f"Languages mentioned: {counter.most_common()}")
+
+    return mentions
 
 if __name__ == '__main__':
 
+    # extract_data("papers")
     documents = load_data("papers")
     analyze(documents)
