@@ -23,6 +23,8 @@ def extract_data(dir: str):
     for root, _, files in os.walk(dir):
         for file in tqdm(files):
             filename, _ = os.path.splitext(file)
+            if os.path.exists(os.path.join(root, f"{filename}.json")):
+                continue
             try:
                 article_dict = scipdf.parse_pdf_to_dict(os.path.join(root, file))
                 with open(os.path.join(root, f"{filename}.json"), 'w') as o:
@@ -87,6 +89,6 @@ def analyze(documents: List[str]):
 
 if __name__ == '__main__':
 
-    # extract_data("papers")
+    extract_data("papers")
     documents = load_data("papers")
     analyze(documents)
