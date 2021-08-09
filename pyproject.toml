@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "bender-ruler"
+version = "0.1.0"
+description = "Bender rule analysis for conferences."
+authors = ["Chenghao Mou <mouchenghao@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.26.0"
+spacy = "^3.1.1"
+beautifulsoup4 = "^4.9.3"
+rich = "^10.7.0"
+typer = "^0.3.2"
+scipdf = {git = "https://github.com/titipata/scipdf_parser"}
+dask = {version = "^2021.7.2", extras = ["bag"]}
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

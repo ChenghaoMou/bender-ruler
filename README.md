@@ -16,24 +16,24 @@ Simple check for mentioning of languages for ACL Anthology conference papers.
 
 -   papers that target at more than one language or no language at all **are not excluded**
 
-## Stats
+## Stats for ACL 2021
 
-- 758/1385 papers mention at least one language.
-- top languages are:
-  - ('English', 716)
-  - ('Spanish', 58)
-  - ('French', 46)
-  - ('Arabic', 44)
-  - ('Chinese', 21)
-  - ('Portuguese', 13)
-  - ('Mandarin', 10)
-  - ('Hebrew', 8)
-  - ('Russian', 8)
-  - ('Latin', 8)
-  - ('Japanese', 4)
-  - ('Cantonese', 3)
-  - ('Tagalog', 3)
-  - ('C++', 2)
-  - ('German', 2)
+-   758/1385 papers mention at least one language.
+-   top languages are:
+    -   ('English', 716)
+    -   ('Spanish', 58)
+    -   ('French', 46)
+    -   ('Arabic', 44)
+    -   ('Chinese', 21)
+    -   ('Portuguese', 13)
+    -   ('Mandarin', 10)
+    -   ('Hebrew', 8)
+    -   ('Russian', 8)
+    -   ('Latin', 8)
+    -   ('Japanese', 4)
+    -   ('Cantonese', 3)
+    -   ('Tagalog', 3)
+    -   ('C++', 2)
+    -   ('German', 2)
 
-Feedbacks and suggestions are welcome.
+Feedbacks and suggestions are welcome!

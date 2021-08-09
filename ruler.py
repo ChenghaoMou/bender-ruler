@@ -5,7 +5,6 @@ from collections import defaultdict, Counter
 
 import scipdf
 import spacy
-from tqdm import tqdm
 from rich.console import Console
 from rich.progress import track
 
@@ -21,7 +20,7 @@ def extract_data(dir: str):
         The directory of pdf files
     """
     for root, _, files in os.walk(dir):
-        for file in tqdm(files):
+        for file in track(files):
             filename, _ = os.path.splitext(file)
             if os.path.exists(os.path.join(root, f"{filename}.json")):
                 continue
@@ -63,24 +62,25 @@ def load_data(dir: str) -> List[str]:
 def analyze(documents: List[str]):
 
     mentions = []
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm", disable=["tagger", "parser", "lemmatizer"])
     titles, documents = zip(*documents)
     counter = Counter()
     non_empty: int = 0
 
     for title, doc in track(zip(titles, documents), total=len(titles)):
         curr = defaultdict(int)
-        doc = nlp(doc) # not using pipe because it is too slow
-        for ent in doc.ents:
-            if ent.label_ == "LANGUAGE":
-                curr[ent.text.title()] += 1
-                
-        if curr:
-            non_empty += 1
-            for lan in curr:
-                counter[lan.title()] += 1
-        
-        mentions.append((title, curr))
+        with nlp.select_pipes(enable="ner"):
+            doc = nlp(doc) # not using pipe because it is too slow
+            for ent in doc.ents:
+                if ent.label_ == "LANGUAGE":
+                    curr[ent.text.title()] += 1
+                    
+            if curr:
+                non_empty += 1
+                for lan in curr:
+                    counter[lan.title()] += 1
+            
+            mentions.append((title, curr))
     
     console.print(f"{non_empty}/{len(titles)} paper(s) mention(s) at least one language.")
     console.print(f"Languages mentioned: {counter.most_common()}")
